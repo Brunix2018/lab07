@@ -28,10 +28,12 @@ export default class AppBanco extends Component {
 			dias:10,
 			checked:true,
 			interes:0,
+			tasa:0,
 			
 			
 		};
 		this.hacerPlazoFijo = this.hacerPlazoFijo.bind(this);
+		this.intereses = this.intereses.bind(this);
 	}
 	hacerPlazoFijo() {
 		ToastAndroid.show('Presiono el boton de hacer plazo fijo!',
@@ -39,9 +41,34 @@ export default class AppBanco extends Component {
 	}
 	
 	intereses(value) {
-		this.setState({ dias: Number.parseInt (value,10) }); 
-		ToastAndroid.show('calcular intereses',
-			ToastAndroid.LONG);
+		this.setState({ dias: Number.parseInt (value,10) });
+		
+		if(this.state.monto<=5000) {
+            if(this.state.dias<30) {
+            this.setState({ tasa: 25 })
+			}else{
+              this.setState({ tasa: 27.5 })
+			}
+		}
+		
+		if(this.state.monto<=99999) {
+            if(this.state.dias<30) {
+            this.setState({ tasa: 30 })
+			}else{
+              this.setState({ tasa: 32.3 })
+			}
+		}
+		
+		if(this.state.monto>99999) {
+            if(this.state.dias<30) {
+            this.setState({ tasa: 35 })
+			}else{
+              this.setState({ tasa: 38.3 })
+			}
+		}
+			
+		this.setState({ interes: (this.state.monto * (Math.pow((1 + (this.state.tasa/100)), (this.state.dias/360))-1) ) }) 
+		ToastAndroid.show('calcular intereses',	ToastAndroid.LONG);
 	}
 	
 	
@@ -91,13 +118,13 @@ export default class AppBanco extends Component {
 		  minimumValue={10}
           maximumValue={120}
 		  style = { {width: 400}}
-          onValueChange = {(value) => this.intereses({	dias: value})}
+          onValueChange = {(value) => this.intereses(value)}
           
         />
 		<View style={{ flexDirection: 'row' }}>
 				<Text> Intereses: </Text>
 					
-				<Text style={styles.text}>{String(this.state.dias)}</Text>
+				<Text style={styles.text}>{String(this.state.interes)}</Text>
 			 </View>
       <Text></Text>
 			 
