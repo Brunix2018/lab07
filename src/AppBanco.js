@@ -20,15 +20,17 @@ export default class AppBanco extends Component {
 		super(props);
 		this.state = {
 			moneda:1,
-			capitalInicial:0,
-			capitalFinal:0,
 			email:"",
 			cuit:"",
-			monto:"",
+			monto:0,
 			dias:10,
 			checked:true,
 			interes:0,
 			tasa:0,
+			enviar: true,
+			hacerP:false,
+			resultado:"",
+			
 			
 			
 		};
@@ -36,8 +38,27 @@ export default class AppBanco extends Component {
 		this.intereses = this.intereses.bind(this);
 	}
 	hacerPlazoFijo() {
-		ToastAndroid.show('Presiono el boton de hacer plazo fijo!',
-			ToastAndroid.LONG);
+		if(this.state.checked) {
+            if(this.state.monto==0) {
+				this.state.hacerP=false;
+            ToastAndroid.show('El monto debe ser mayor a Cero',ToastAndroid.LONG);
+			}else{
+				if(this.state.cuit=="") {
+					this.state.hacerP=false;
+				ToastAndroid.show('Debe ingresar un Cuit',ToastAndroid.LONG);
+				}else{
+					if(this.state.email=="") {
+						this.state.hacerP=false;
+					ToastAndroid.show('Debe ingresar un Email',ToastAndroid.LONG);
+					}else{
+					  this.state.hacerP=true;					  
+					  ToastAndroid.show('Plazo fijo aceptado!',ToastAndroid.LONG);
+					}
+				}
+			}
+		}else{
+		 ToastAndroid.show('Debe aceptar las condiciones',ToastAndroid.LONG);
+		}
 	}
 	
 	intereses(value) {
@@ -81,16 +102,20 @@ export default class AppBanco extends Component {
 		return (
 			 <View style = {
 				styles.container
-			}
-			>
+			}>
+			<Text></Text>
+			<Text></Text>
+			<Text></Text>
+			<Text></Text>
 			 <Text> Correo Electronico </Text>
 			 <TextInput 
-                placeholder='correo@mail.com' 
+               
+					keyboardType="email-address"
 				onChangeText = {(text) => this.setState({email:text})}
 				/>
 			 <Text> CUIT </Text>
 			 <TextInput 
-                placeholder='00-00000000-0' 
+                keyboardType="numeric"
 				onChangeText = {(text) => this.setState({cuit:text})}
 				/>
 			 <Text> Moneda </Text>
@@ -104,7 +129,7 @@ export default class AppBanco extends Component {
 			 
 				 <Text> Monto </Text>
 				 <TextInput 
-					placeholder='000' 
+					  keyboardType="numeric"
 					onChangeText = {(text) => this.setState({monto:text})}
 					/>
 			 
@@ -130,9 +155,12 @@ export default class AppBanco extends Component {
 			 
 			 <View style={{ flexDirection: 'row' }}>
 				 <Text> Avisar por mail </Text>
-				 <Switch></Switch>
-				 </View>
-			 
+				 
+				<Switch
+					onValueChange={(value) => this.setState({enviar: value})}
+					value={this.state.enviar} />				
+			</View>
+
   
 			 <View style={{ flexDirection: 'row' }}>
 				<Text style={{marginTop: 5}}>Acepto condiciones</Text>
@@ -141,13 +169,15 @@ export default class AppBanco extends Component {
 				  onValueChange={() => this.setState({ checked: !this.state.checked })}
 				/>    
 			  </View>
+			  
 
 			 <Button title = "Hacer Plazo Fijo"
 				color = "#FF0000"
 				onPress = {	this.hacerPlazoFijo	}
 				>
 			 </Button>
-			 <Text> [[RESULTADO DE LA OPERACION]] </Text>
+			
+			<Text style={styles.text}>{"hola ${this.state.hacerP}"}</Text>	
 			 </View> );
 	}
 }
@@ -170,3 +200,9 @@ const styles = StyleSheet.create({
 			marginBottom: 5,
 		},
 	});
+
+
+
+
+
+
